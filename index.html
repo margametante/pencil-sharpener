@@ -318,18 +318,24 @@
       }
     }
 
-    sharpenBtn.addEventListener('mousedown', () => {
+    function startSharpening(e) {
+      e.preventDefault();
       if (sharpenProgress >= 100) return;
       crank.classList.add('spin');
       hole.classList.add('blink');
       sharpeningInterval = setInterval(sharpenStep, 200);
-    });
+    }
 
-    document.addEventListener('mouseup', () => {
+    function stopSharpening() {
       clearInterval(sharpeningInterval);
       crank.classList.remove('spin');
       hole.classList.remove('blink');
-    });
+    }
+
+    sharpenBtn.addEventListener('mousedown', startSharpening);
+    sharpenBtn.addEventListener('touchstart', startSharpening);
+    document.addEventListener('mouseup', stopSharpening);
+    document.addEventListener('touchend', stopSharpening);
 
     function addToHolder() {
       const name = pencilName.textContent.trim();
@@ -345,33 +351,22 @@
 
     function loadPencils() {
       db.ref("pencils").on("value", snapshot => {
-        const data = snapshot.val();
-        console.log("Fetched pencils from Firebase:", data);
         holder.innerHTML = '';
-
-        if (data) {
-          snapshot.forEach(child => {
-            const pencilData = child.val();
-            console.log("Individual pencil:", pencilData);
-
-            const div = document.createElement("div");
-            div.className = "pencil-container";
-            div.innerHTML = `
-              <span class="pencil-name">${pencilData.name}</span>
-              <div class="pencil-tip visible"></div>
-              <div class="lead visible"></div>
-            `;
-            holder.appendChild(div);
-          });
-        } else {
-          console.log("No pencils found in database.");
-        }
+        snapshot.forEach(child => {
+          const div = document.createElement("div");
+          div.className = "pencil-container";
+          div.innerHTML = `
+            <span class="pencil-name">${child.val().name}</span>
+            <div class="pencil-tip visible"></div>
+            <div class="lead visible"></div>
+          `;
+          holder.appendChild(div);
+        });
       });
     }
   </script>
   <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">thank you guys ily all ! &lt;3<br>- marga 🫶</p>
 </body>
 </html>
-
 
 
