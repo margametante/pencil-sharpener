@@ -4,6 +4,86 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sharpen My Pencil</title>
+  <!-- Firebase v8 CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    /* [Keep all existing styles here] */
+  </style>
+</head>
+<body onload="loadPencils()">
+  <!-- [Keep existing body content here] -->
+
+  <script>
+    // Firebase config for v8
+    var firebaseConfig = {
+      apiKey: "AIzaSyA-7IDitwDzQHLi_KFLH1h4DkogbokEMiU",
+      authDomain: "margapencilholder.firebaseapp.com",
+      projectId: "margapencilholder",
+      storageBucket: "margapencilholder.firebasestorage.app",
+      messagingSenderId: "362822194062",
+      appId: "1:362822194062:web:edd1b37e273e8ff9a6cadf"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
+    var pencilsRef = db.ref('pencils');
+
+    function savePencil(name) {
+      if (name) {
+        pencilsRef.push(name);
+      }
+    }
+
+    function loadPencils() {
+      pencilsRef.on('value', function(snapshot) {
+        var holder = document.getElementById('holder');
+        holder.innerHTML = '';
+        snapshot.forEach(function(childSnapshot) {
+          var name = childSnapshot.val();
+          var pencilEl = document.createElement('div');
+          pencilEl.className = 'pencil-container';
+          pencilEl.style.width = '200px';
+          pencilEl.innerHTML = `
+            <span class="pencil-name">${name}</span>
+            <div class="pencil-tip visible"></div>
+            <div class="lead visible"></div>
+          `;
+          holder.appendChild(pencilEl);
+        });
+      });
+    }
+
+    function addToHolder() {
+      var pencilName = document.getElementById('pencilName');
+      var nameInput = document.getElementById('nameInput');
+      var lead = document.querySelector('.lead');
+      var tip = document.querySelector('.pencil-tip');
+
+      if (!pencilName.textContent) {
+        alert("Please enter your name first.");
+        return;
+      }
+
+      var name = pencilName.textContent;
+      savePencil(name);
+
+      lead.classList.remove('visible');
+      tip.classList.remove('visible');
+      pencilName.textContent = '';
+      nameInput.value = '';
+    }
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sharpen My Pencil</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
     body {
@@ -342,3 +422,4 @@
   <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">thank you guys ily all ! &lt;3<br>- marga 🫶</p>
 </body>
 </html>
+
