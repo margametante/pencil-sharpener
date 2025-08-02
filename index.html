@@ -4,47 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sharpen My Pencil</title>
+  <!-- Firebase v8 CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
     body {
       font-family: 'Quicksand', cursive;
       background-color: #ffffff;
-      font-family: 'Arial', sans-serif;
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      margin: 0;
       padding: 20px;
-      color: #333;
+      margin: 0;
     }
-
     h1 {
       color: #444;
       margin-bottom: 10px;
     }
-
     .instruction {
       font-size: 14px;
       color: #888;
       margin-bottom: 5px;
     }
-
     .sub-instruction {
       font-size: 13px;
       color: #aaa;
       margin-bottom: 20px;
     }
-
     .machine-area {
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 20px;
-      position: relative;
     }
-
     .pencil-container {
       position: relative;
       width: 200px;
@@ -55,15 +49,11 @@
       align-items: center;
       justify-content: center;
       overflow: visible;
-      z-index: 1;
       transition: transform 0.4s ease;
-      transform: translateX(0);
     }
-
     .pencil-container.inserted {
       transform: translateX(80px);
     }
-
     .pencil-tip {
       position: absolute;
       right: -15px;
@@ -74,11 +64,9 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-
     .pencil-tip.visible {
       opacity: 1;
     }
-
     .lead {
       position: absolute;
       right: -17px;
@@ -89,20 +77,15 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-
     .lead.visible {
       opacity: 1;
     }
-
     .pencil-name {
       color: #2c3e50;
       font-weight: bold;
       font-size: 14px;
       white-space: nowrap;
-      pointer-events: none;
-      z-index: 1;
     }
-
     .sharpener-body {
       width: 100px;
       height: 80px;
@@ -111,7 +94,6 @@
       margin-left: -10px;
       position: relative;
     }
-
     .sharpener-hole {
       width: 20px;
       height: 20px;
@@ -121,11 +103,6 @@
       left: -10px;
       top: 30px;
     }
-
-    .sharpener-hole.blink {
-      animation: blink 0.4s steps(1) infinite;
-    }
-
     .crank {
       position: absolute;
       width: 20px;
@@ -134,22 +111,14 @@
       border-radius: 10px;
       right: -20px;
       top: 20px;
-      transform-origin: center;
     }
-
     .crank.spin {
       animation: spin 0.5s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    @keyframes blink {
-      50% { background-color: #555; }
-    }
-
     .controls {
       margin-top: 20px;
       display: flex;
@@ -157,15 +126,12 @@
       align-items: center;
       gap: 10px;
     }
-
     input[type="text"] {
       padding: 8px;
       border: 2px solid #f8c8dc;
       border-radius: 5px;
-      outline: none;
       text-align: center;
     }
-
     button {
       padding: 10px 20px;
       border: none;
@@ -174,29 +140,10 @@
       font-weight: bold;
       background-color: #f8c8dc;
       color: #333;
-      transition: transform 0.2s ease, background 0.2s ease;
     }
-
-    button:hover {
-      background-color: #f4a3c5;
-      transform: scale(1.05);
+    .done-btn {
+      background-color: #c8f8e4;
     }
-
-    .sparkle {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: radial-gradient(circle, #fff7c2 0%, #fceabb 70%, transparent 100%);
-      border-radius: 50%;
-      animation: sparkle 0.8s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes sparkle {
-      0% { transform: scale(0.2); opacity: 1; }
-      100% { transform: scale(1.5); opacity: 0; }
-    }
-
     .holder-container {
       margin-top: 40px;
       padding: 20px;
@@ -206,31 +153,27 @@
       text-align: center;
       background-color: #fefefe;
     }
-
     .holder-title {
       font-size: 16px;
       font-weight: bold;
       color: #888;
       margin-bottom: 10px;
     }
-
     .holder-pencils {
       display: flex;
       flex-direction: column;
       gap: 10px;
       align-items: center;
     }
-
-    .done-btn {
-      background-color: #c8f8e4;
-    }
-
-    .done-btn:hover {
-      background-color: #a6e8ce;
+    .delete-btn {
+      margin-left: 10px;
+      background: #ffb3b3;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
-<body>
+<body onload="loadPencils()">
   <h1>Sharpen My Pencil?</h1>
   <div class="instruction">Hold down the <strong>Sharpen</strong> button to sharpen your pencil! 🪄</div>
   <div class="sub-instruction">Click the <strong>Done</strong> button to add your pencil to Marga's pencil holder!</div>
@@ -258,7 +201,23 @@
     <div id="holder" class="holder-pencils"></div>
   </div>
 
+  <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">
+    thank you guys ily all ! &lt;3<br>- marga 🫶
+  </p>
+
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSy...",
+      authDomain: "margapencilholder.firebaseapp.com",
+      databaseURL: "https://margapencilholder-default-rtdb.firebaseio.com",
+      projectId: "margapencilholder",
+      storageBucket: "margapencilholder.appspot.com",
+      messagingSenderId: "362822194062",
+      appId: "1:362822194062:web:edd1b37e273e8ff9a6cadf"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const pencil = document.getElementById('pencil');
     const pencilName = document.getElementById('pencilName');
     const nameInput = document.getElementById('nameInput');
@@ -294,15 +253,21 @@
     }
 
     function sparkleEffect() {
-  for (let i = 0; i < 6; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.className = 'sparkle';
-    sparkle.style.left = (pencil.offsetLeft + 80 + Math.random() * 30 - 15) + 'px';
-    sparkle.style.top = (pencil.offsetTop + 10 + Math.random() * 30 - 15) + 'px';
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 1000);
-  }
-}
+      for (let i = 0; i < 6; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = (pencil.offsetLeft + 80 + Math.random() * 30 - 15) + 'px';
+        sparkle.style.top = (pencil.offsetTop + 10 + Math.random() * 30 - 15) + 'px';
+        sparkle.style.position = 'absolute';
+        sparkle.style.width = '20px';
+        sparkle.style.height = '20px';
+        sparkle.style.background = 'radial-gradient(circle, #fff7c2 0%, #fceabb 70%, transparent 100%)';
+        sparkle.style.borderRadius = '50%';
+        sparkle.style.animation = 'sparkle 0.8s ease-out forwards';
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1000);
+      }
+    }
 
     sharpenBtn.addEventListener('mousedown', () => {
       if (sharpenProgress >= 100) return;
@@ -318,28 +283,38 @@
     });
 
     function addToHolder() {
-      if (!pencilName.textContent) {
-        alert("Please enter your name first.");
-        return;
-      }
-      const newPencil = document.createElement('div');
-      newPencil.className = 'pencil-container';
-      newPencil.style.width = '200px';
-      newPencil.innerHTML = `
-        <span class="pencil-name">${pencilName.textContent}</span>
-        <div class="pencil-tip visible"></div>
-        <div class="lead visible"></div>
-      `;
-      holder.appendChild(newPencil);
-
-      lead.classList.remove('visible');
-      tip.classList.remove('visible');
-      sharpenProgress = 0;
+      const name = pencilName.textContent.trim();
+      if (!name) return alert("Please enter your name first.");
+      const id = db.ref("pencils").push().key;
+      db.ref("pencils/" + id).set({ name });
       pencilName.textContent = '';
       nameInput.value = '';
+      sharpenProgress = 0;
+      tip.classList.remove('visible');
+      lead.classList.remove('visible');
+    }
+
+    function loadPencils() {
+      db.ref("pencils").on("value", snapshot => {
+        holder.innerHTML = '';
+        snapshot.forEach(child => {
+          const div = document.createElement("div");
+          div.className = "pencil-container";
+          div.innerHTML = `
+            <span class="pencil-name">${child.val().name}</span>
+            <div class="pencil-tip visible"></div>
+            <div class="lead visible"></div>
+            <button class="delete-btn" onclick="deletePencil('${child.key}')">x</button>
+          `;
+          holder.appendChild(div);
+        });
+      });
+    }
+
+    function deletePencil(id) {
+      db.ref("pencils/" + id).remove();
     }
   </script>
-  <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">thank you guys ily all ! &lt;3<br>- marga 🫶</p>
 </body>
 </html>
 
