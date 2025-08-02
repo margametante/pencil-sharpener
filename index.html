@@ -9,7 +9,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
   <style>
-    /* Paste your full CSS styles here (from your second HTML block) */
     body {
       font-family: 'Quicksand', cursive;
       background-color: #ffffff;
@@ -22,7 +21,19 @@
       padding: 20px;
       color: #333;
     }
-    /* (All your other styles go here: h1, .instruction, .machine-area, etc.) */
+    .delete-btn {
+      background-color: #ffdddd;
+      border: none;
+      border-radius: 6px;
+      padding: 2px 6px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #a00;
+    }
+    .delete-btn:hover {
+      background-color: #ffcccc;
+    }
   </style>
 </head>
 <body onload="loadPencils()">
@@ -75,17 +86,23 @@
       }
     }
 
+    function deletePencil(id) {
+      pencilsRef.child(id).remove();
+    }
+
     function loadPencils() {
       pencilsRef.on('value', function(snapshot) {
         var holder = document.getElementById('holder');
         holder.innerHTML = '';
         snapshot.forEach(function(childSnapshot) {
+          var id = childSnapshot.key;
           var name = childSnapshot.val();
           var pencilEl = document.createElement('div');
           pencilEl.className = 'pencil-container';
           pencilEl.style.width = '200px';
           pencilEl.innerHTML = `
             <span class="pencil-name">${name}</span>
+            <button class="delete-btn" onclick="deletePencil('${id}')">❌</button>
             <div class="pencil-tip visible"></div>
             <div class="lead visible"></div>
           `;
@@ -168,7 +185,7 @@
   </script>
 </body>
 </html>
-</body>
-</html>
+
+
 
 
