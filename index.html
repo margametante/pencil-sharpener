@@ -9,154 +9,228 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
     body {
-      font-family: 'Quicksand', sans-serif;
-      background-color: #fffafc;
-      text-align: center;
-      padding: 40px;
+      font-family: 'Quicksand', cursive;
+      background-color: #ffffff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
       color: #333;
     }
+
     h1 {
-      color: #3c2a4d;
-    }
-    .instruction, .sub-instruction {
-      font-size: 16px;
-      margin-top: 10px;
-      color: #666;
-    }
-    .machine-area {
-      margin: 30px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .pencil-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      position: relative;
-      width: 150px;
-      height: 40px;
-      background: linear-gradient(to right, #ffcc70, #ffb347);
-      border-radius: 10px 0 0 10px;
-      margin-right: -15px;
-      transition: transform 0.3s;
-    }
-    .pencil-tip, .lead {
-      display: none;
-      position: absolute;
-      right: -10px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-    .pencil-tip.visible {
-      display: block;
-      background: #e0705b;
-    }
-    .lead.visible {
-      display: block;
-      background: #333;
-      right: -15px;
-    }
-    .sharpener-body {
-      width: 80px;
-      height: 60px;
-      background-color: pink;
-      border-radius: 10px;
-      position: relative;
-      margin-left: 10px;
-    }
-    .sharpener-hole {
-      width: 12px;
-      height: 12px;
-      background-color: #a0522d;
-      border-radius: 50%;
-      position: absolute;
-      left: -6px;
-      top: 24px;
-    }
-    .sharpener-hole.blink {
-      animation: blink 0.4s infinite alternate;
-    }
-    @keyframes blink {
-      from { background-color: #a0522d; }
-      to { background-color: #d2691e; }
-    }
-    .crank {
-      width: 10px;
-      height: 10px;
-      background-color: #d2a679;
-      border-radius: 50%;
-      position: absolute;
-      right: -12px;
-      top: 24px;
-    }
-    .crank.spin {
-      animation: spin 0.3s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .controls {
-      margin: 20px 0;
-    }
-    .controls input, .controls button {
-      padding: 10px;
-      margin: 5px;
-      font-family: 'Quicksand', sans-serif;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-    #sharpenBtn {
-      background-color: pink;
-      font-weight: bold;
-    }
-    .done-btn {
-      background-color: #d3ffe0;
-      font-weight: bold;
-    }
-    .holder-container {
-      margin-top: 30px;
-    }
-    .holder-title {
-      font-weight: bold;
+      color: #444;
       margin-bottom: 10px;
-      font-size: 18px;
-      color: #555;
-      border: 2px dashed #ccc;
-      padding: 10px;
-      border-radius: 10px;
-      display: inline-block;
     }
-    .holder-pencils {
+
+    .instruction {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+
+    .sub-instruction {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+
+    .machine-area {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
+      margin-bottom: 20px;
+      position: relative;
     }
+
+    .pencil-container {
+      position: relative;
+      width: 200px;
+      height: 40px;
+      background: linear-gradient(90deg, #f4d03f, #f39c12);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      z-index: 1;
+      transition: transform 0.4s ease;
+      transform: translateX(0);
+    }
+
+    .pencil-container.inserted {
+      transform: translateX(80px);
+    }
+
+    .pencil-tip {
+      position: absolute;
+      right: -15px;
+      width: 20px;
+      height: 40px;
+      background: #d2b48c;
+      clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .pencil-tip.visible {
+      opacity: 1;
+    }
+
+    .lead {
+      position: absolute;
+      right: -17px;
+      width: 5px;
+      height: 10px;
+      background: #333;
+      top: 15px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .lead.visible {
+      opacity: 1;
+    }
+
+    .pencil-name {
+      color: #2c3e50;
+      font-weight: bold;
+      font-size: 14px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .sharpener-body {
+      width: 100px;
+      height: 80px;
+      background-color: #f8a7b5;
+      border-radius: 10px;
+      margin-left: -10px;
+      position: relative;
+    }
+
+    .sharpener-hole {
+      width: 20px;
+      height: 20px;
+      background-color: #333;
+      border-radius: 50%;
+      position: absolute;
+      left: -10px;
+      top: 30px;
+    }
+
+    .sharpener-hole.blink {
+      animation: blink 0.4s steps(1) infinite;
+    }
+
+    .crank {
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      background: #c9a584;
+      border-radius: 10px;
+      right: -20px;
+      top: 20px;
+      transform-origin: center;
+    }
+
+    .crank.spin {
+      animation: spin 0.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes blink {
+      50% { background-color: #555; }
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      border: 2px solid #f8c8dc;
+      border-radius: 5px;
+      outline: none;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      background-color: #f8c8dc;
+      color: #333;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #f4a3c5;
+      transform: scale(1.05);
+    }
+
     .sparkle {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #fff;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #fff7c2 0%, #fceabb 70%, transparent 100%);
       border-radius: 50%;
-      box-shadow: 0 0 5px #fff;
-      animation: sparkle 1s ease-out;
+      animation: sparkle 0.8s ease-out forwards;
+      pointer-events: none;
     }
+
     @keyframes sparkle {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(2); }
+      0% { transform: scale(0.2); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
     }
-    .delete-btn {
-      background: #fdd;
-      border: none;
-      border-radius: 3px;
-      font-size: 10px;
-      cursor: pointer;
-      margin-left: 5px;
+
+    .holder-container {
+      margin-top: 40px;
+      padding: 20px;
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+      background-color: #fefefe;
+    }
+
+    .holder-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .holder-pencils {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .done-btn {
+      background-color: #c8f8e4;
+    }
+
+    .done-btn:hover {
+      background-color: #a6e8ce;
     }
   </style>
 </head>
@@ -187,10 +261,6 @@
     <div class="holder-title">Marga's Pencils</div>
     <div id="holder" class="holder-pencils"></div>
   </div>
-
-  <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">
-    thank you guys ily all ! &lt;3<br>- marga 🫶
-  </p>
 
   <script>
     const firebaseConfig = {
@@ -283,16 +353,14 @@
             <span class="pencil-name">${child.val().name}</span>
             <div class="pencil-tip visible"></div>
             <div class="lead visible"></div>
-            <button class="delete-btn" onclick="deletePencil('${child.key}')">x</button>
           `;
           holder.appendChild(div);
         });
       });
     }
-
-    function deletePencil(id) {
-      db.ref("pencils/" + id).remove();
-    }
   </script>
+  <p style="font-family: 'Quicksand', cursive; font-size: 14px; margin-top: 40px; color: #999;">thank you guys ily all ! &lt;3<br>- marga 🫶</p>
 </body>
 </html>
+
+
